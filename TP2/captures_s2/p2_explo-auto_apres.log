@@ -1,0 +1,29 @@
+[c1] DEMARRAGE t=15:18:58 groupe=explo-auto reset=earliest auto_commit=True strategie=range
+[c1] ATTRIBUTION t=15:19:38 lus=0 partitions=[0, 1, 2, 3, 4, 5]
+[c1] lus=50 partition=0 offset=2416 patient=P010
+[c1] lus=100 partition=0 offset=2466 patient=P005
+[c1] lus=150 partition=1 offset=1327 patient=P007
+[c1] lus=200 partition=3 offset=814 patient=P008
+[c1] lus=250 partition=3 offset=864 patient=P003
+[c1] lus=300 partition=3 offset=914 patient=P009
+[c1] lus=350 partition=4 offset=829 patient=P006
+[c1] lus=400 partition=4 offset=879 patient=P002
+[c1] lus=450 partition=4 offset=929 patient=P011
+[c1] lus=500 partition=5 offset=579 patient=P004
+[c1] lus=550 partition=1 offset=1358 patient=P007
+[c1] lus=600 partition=5 offset=629 patient=P004
+[c1] lus=650 partition=0 offset=2530 patient=P010
+[c1] lus=700 partition=3 offset=969 patient=P003
+[c1] lus=750 partition=4 offset=983 patient=P011
+[c1] lus=800 partition=0 offset=2567 patient=P012
+[c1] lus=850 partition=3 offset=1005 patient=P003
+[c1] lus=900 partition=0 offset=2591 patient=P012
+[c1] lus=950 partition=4 offset=1033 patient=P006
+[c1] lus=1000 partition=3 offset=1046 patient=P009
+[c1] lus=1050 partition=0 offset=2630 patient=P012
+[c1] lus=1100 partition=5 offset=713 patient=P004
+[c1] lus=1150 partition=3 offset=1080 patient=P003
+[c1] lus=1200 partition=5 offset=729 patient=P004
+[c1] lus=1250 partition=4 offset=1108 patient=P006
+[c1] FIN t=15:20:40 lus=1272 repartition={0:318, 1:106, 3:318, 4:318, 5:212}
+[c1] RETRAIT t=15:20:40 lus=1272 partitions=[0, 1, 2, 3, 4, 5]

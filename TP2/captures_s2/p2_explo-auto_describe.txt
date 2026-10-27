@@ -1,0 +1,8 @@
+
+GROUP           TOPIC           PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG             CONSUMER-ID                                     HOST            CLIENT-ID
+explo-auto      mimic-vitals    1          1313            1316            3               lecteur-c1-26f7e9e7-86cf-4678-92ff-79e0f4677f48 /192.168.65.1   lecteur-c1
+explo-auto      mimic-vitals    2          524             524             0               lecteur-c1-26f7e9e7-86cf-4678-92ff-79e0f4677f48 /192.168.65.1   lecteur-c1
+explo-auto      mimic-vitals    0          2367            2376            9               lecteur-c1-26f7e9e7-86cf-4678-92ff-79e0f4677f48 /192.168.65.1   lecteur-c1
+explo-auto      mimic-vitals    5          530             536             6               lecteur-c1-26f7e9e7-86cf-4678-92ff-79e0f4677f48 /192.168.65.1   lecteur-c1
+explo-auto      mimic-vitals    3          795             804             9               lecteur-c1-26f7e9e7-86cf-4678-92ff-79e0f4677f48 /192.168.65.1   lecteur-c1
+explo-auto      mimic-vitals    4          795             804             9               lecteur-c1-26f7e9e7-86cf-4678-92ff-79e0f4677f48 /192.168.65.1   lecteur-c1

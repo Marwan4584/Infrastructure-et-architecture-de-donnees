@@ -1,0 +1,245 @@
+>> s2.sh partie4 — 2026-10-27 15:35:48
+>> Espace disque libre : 3 Go
+>> ATTENTION : moins de 10 Go libres, risque de disque plein (images PostgreSQL et consommateur)
+>> Docker OK
+
+================ 4.2 PostgreSQL (MESURE 12) (15:35:58)
+compose OK
+ Image cgr.dev/chainguard/postgres:latest@sha256:0926ac7262a2c1963179eb939cd5d610e1be3ecca90b4b5cad8db8df16fab87e Pulling 
+ Image cgr.dev/chainguard/postgres:latest@sha256:0926ac7262a2c1963179eb939cd5d610e1be3ecca90b4b5cad8db8df16fab87e Pulled 
+ Volume s1-vitals-stream_pg-data Creating 
+ Volume s1-vitals-stream_pg-data Created 
+ Container vitals-postgres Creating 
+ Container vitals-postgres Created 
+ Container vitals-postgres Starting 
+ Container vitals-postgres Started 
+MESURE 12 : delai up -d postgres -> healthy = TIMEOUT s
+NAME              IMAGE                                                                                                        COMMAND                  SERVICE    CREATED         STATUS                            PORTS
+vitals-postgres   cgr.dev/chainguard/postgres:latest@sha256:0926ac7262a2c1963179eb939cd5d610e1be3ecca90b4b5cad8db8df16fab87e   "/usr/bin/docker-ent…"   postgres   5 seconds ago   Up 2 seconds (health: starting)   0.0.0.0:55432->5432/tcp, [::]:55432->5432/tcp
+            List of tables
+ Schema |    Name    | Type  |  Owner  
+--------+------------+-------+---------
+ public | vitals_raw | table | hs_user
+(1 row)
+
+                          Table "public.vitals_raw"
+     Column      |           Type           | Collation | Nullable | Default 
+-----------------+--------------------------+-----------+----------+---------
+ kafka_partition | integer                  |           | not null | 
+ kafka_offset    | bigint                   |           | not null | 
+ patient_id      | character varying(16)    |           | not null | 
+ event_time      | timestamp with time zone |           | not null | 
+ vital_type      | character varying(16)    |           | not null | 
+ value           | numeric(8,2)             |           | not null | 
+ unit            | character varying(8)     |           | not null | 
+ ingested_at     | timestamp with time zone |           | not null | now()
+Indexes:
+    "pk_vitals_raw" PRIMARY KEY, btree (kafka_partition, kafka_offset)
+    "idx_vitals_patient_time" btree (patient_id, event_time DESC)
+Check constraints:
+    "ck_vital_type" CHECK (vital_type::text = ANY (ARRAY['HR'::character varying, 'SPO2'::character varying, 'ABP_SYS'::character varying]::text[]))
+
+                List of views
+ Schema |       Name        | Type |  Owner  
+--------+-------------------+------+---------
+ public | v_vitals_controle | view | hs_user
+(1 row)
+
+
+================ 4.3 Consommateur depuis l'hote, 60 s (MESURE 13) (15:36:21)
+15:36:32 Demarrage : bootstrap=localhost:29092 topic=mimic-vitals groupe=vitals-persister lot=200 delai=5.0s base=localhost:55432/healthstream
+15:36:36 ATTRIBUTION partitions=[0, 1, 2, 3, 4, 5]
+15:36:36 LOT taille=200 inseres=200 doublons=0 lus=200
+...
+15:37:19 LOT taille=59 inseres=59 doublons=0 lus=16536
+15:37:23 LOT taille=49 inseres=49 doublons=0 lus=16585 (dernier lot)
+15:37:23 RETRAIT partitions=[0, 1, 2, 3, 4, 5]
+15:37:23 Arret. lus=16585 inseres=16585 ignores_doublons=0 rejets=0 duree=47.0s debit=352.9 msg/s
+ lignes_totales | messages_distincts | patients_distincts |      premier_releve      |       dernier_releve       
+----------------+--------------------+--------------------+--------------------------+----------------------------
+          16585 |              16585 |                 12 | 2026-10-27 14:13:52.6+00 | 2026-10-27 14:37:23.474+00
+(1 row)
+
+ kafka_partition | count | min  | max  
+-----------------+-------+------+------
+               0 |  4183 | 1500 | 5682
+               1 |  1418 | 1000 | 2417
+               2 |    24 |  500 |  523
+               3 |  4110 |    0 | 4109
+               4 |  4110 |    0 | 4109
+               5 |  2740 |    0 | 2739
+(6 rows)
+
+
+================ 4.4 Chaine complete dans le Compose (MESURE 14) (15:37:25)
+ Image vitals-producer:0.1 Building 
+ Image vitals-consumer:0.1 Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.01kB done
+#1 DONE 0.0s
+
+#2 [consumer internal] load build definition from Dockerfile
+#2 transferring dockerfile: 926B 0.0s done
+#2 DONE 0.0s
+
+#3 [producer internal] load build definition from Dockerfile
+#3 transferring dockerfile: 417B 0.0s done
+#3 DONE 0.0s
+
+#4 [consumer internal] load metadata for cgr.dev/chainguard/wolfi-base:latest@sha256:0b179206ab162b12a43bacea1b525a4023e0272005c92d08555c61b1beaedc40
+#4 DONE 0.0s
+
+#5 [consumer internal] load .dockerignore
+#5 transferring context: 72B done
+#5 DONE 0.0s
+
+#6 [consumer internal] load build context
+#6 transferring context: 13.68kB done
+#6 DONE 0.0s
+
+#7 [consumer 1/7] FROM cgr.dev/chainguard/wolfi-base:latest@sha256:0b179206ab162b12a43bacea1b525a4023e0272005c92d08555c61b1beaedc40
+#7 DONE 0.1s
+
+#8 [consumer 2/7] RUN apk add --no-cache python-3.12
+#8 0.426 fetch https://apk.cgr.dev/chainguard/aarch64/APKINDEX.tar.gz
+#8 ...
+
+#9 [producer internal] load metadata for docker.io/library/python:3.12-slim
+#9 DONE 2.0s
+
+#10 [producer internal] load .dockerignore
+#10 transferring context: 83B done
+#10 DONE 0.0s
+
+#11 [producer 1/6] FROM docker.io/library/python:3.12-slim@sha256:12316debbfb86890f6b2d825820612741ba527ad5a44e3902759141d572bfe8f
+#11 DONE 0.0s
+
+#12 [producer internal] load build context
+#12 transferring context: 3.05kB done
+#12 DONE 0.0s
+
+#13 [producer 4/6] RUN pip install --no-cache-dir -r requirements.txt
+#13 CACHED
+
+#14 [producer 2/6] WORKDIR /app
+#14 CACHED
+
+#15 [producer 5/6] COPY producer.py ./
+#15 CACHED
+
+#16 [producer 3/6] COPY requirements.txt ./
+#16 CACHED
+
+#17 [producer 6/6] RUN useradd --uid 10001 --no-create-home --shell /usr/sbin/nologin appuser     && mkdir -p /app/logs     && chown -R appuser:appuser /app
+#17 CACHED
+
+#18 [producer] exporting to image
+#18 exporting layers done
+#18 writing image sha256:6be93cede4ef85703160196cbb513125961936198b8d7ac2726065d67634f03f done
+#18 naming to docker.io/library/vitals-producer:0.1 done
+#18 DONE 0.0s
+
+#19 [producer] resolving provenance for metadata file
+#19 DONE 0.0s
+
+#8 [consumer 2/7] RUN apk add --no-cache python-3.12
+#8 8.233 (1/15) Installing py3-pip-wheel (26.2.2-r0)
+#8 10.19 (2/15) Installing libbz2-1 (1.0.8-r28)
+#8 10.98 (3/15) Installing libexpat1 (2.9.0-r0)
+#8 12.10 (4/15) Installing libffi (3.8.0-r2)
+#8 13.13 (5/15) Installing gdbm (1.26-r9)
+#8 14.25 (6/15) Installing xz (5.8.4-r0)
+#8 15.02 (7/15) Installing libstdc++ (16.2.0-r2)
+#8 16.69 (8/15) Installing mpdecimal (4.0.1-r6)
+#8 17.79 (9/15) Installing ncurses-terminfo-base (6.6.20261024-r0)
+#8 19.03 (10/15) Installing ncurses (6.6.20261024-r0)
+#8 19.96 (11/15) Installing readline (8.3-r3)
+#8 20.74 (12/15) Installing sqlite-libs (3.54.1-r0)
+#8 21.81 (13/15) Installing libuuid (2.42.4-r1)
+#8 22.65 (14/15) Installing python-3.12-base (3.12.16-r1)
+#8 24.42 (15/15) Installing python-3.12 (3.12.16-r1)
+#8 25.22 Executing busybox-1.38.0-r3.trigger
+#8 25.26 OK: 62 MiB in 34 packages
+#8 DONE 25.9s
+
+#20 [consumer 3/7] WORKDIR /app
+#20 DONE 0.0s
+
+#21 [consumer 4/7] COPY requirements.txt ./
+#21 DONE 0.0s
+
+#22 [consumer 5/7] RUN apk add --no-cache py3.12-pip     && python3.12 -m pip install --no-cache-dir --break-system-packages -r requirements.txt     && apk del --no-cache py3.12-pip
+#22 0.173 fetch https://apk.cgr.dev/chainguard/aarch64/APKINDEX.tar.gz
+#22 1.694 (1/3) Installing py3.12-setuptools (84.2.1-r0)
+#22 3.576 (2/3) Installing py3.12-pip-base (26.2.2-r0)
+#22 5.196 (3/3) Installing py3.12-pip (26.2.2-r0)
+#22 6.008 Executing busybox-1.38.0-r3.trigger
+#22 6.031 OK: 84 MiB in 37 packages
+#22 7.049 Collecting confluent-kafka==2.6.1 (from -r requirements.txt (line 1))
+#22 7.291   Downloading confluent_kafka-2.6.1-cp312-cp312-manylinux_2_28_aarch64.whl.metadata (51 kB)
+#22 7.516 Collecting psycopg2-binary==2.9.10 (from -r requirements.txt (line 2))
+#22 7.569   Downloading psycopg2_binary-2.9.10-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl.metadata (4.9 kB)
+#22 7.630 Downloading confluent_kafka-2.6.1-cp312-cp312-manylinux_2_28_aarch64.whl (15.3 MB)
+#22 9.521    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 15.3/15.3 MB 8.4 MB/s  0:00:01
+#22 9.613 Downloading psycopg2_binary-2.9.10-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl (2.9 MB)
+#22 9.840    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.9/2.9 MB 12.6 MB/s  0:00:00
+#22 9.907 Installing collected packages: psycopg2-binary, confluent-kafka
+#22 10.23 
+#22 10.24 Successfully installed confluent-kafka-2.6.1 psycopg2-binary-2.9.10
+#22 10.24 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+#22 10.29 fetch https://apk.cgr.dev/chainguard/aarch64/APKINDEX.tar.gz
+#22 14.67 (1/3) Purging py3.12-pip (26.2.2-r0)
+#22 14.67 (2/3) Purging py3.12-pip-base (26.2.2-r0)
+#22 14.69 (3/3) Purging py3.12-setuptools (84.2.1-r0)
+#22 14.70 Executing busybox-1.38.0-r3.trigger
+#22 14.71 OK: 67 MiB in 34 packages
+#22 DONE 15.3s
+
+#23 [consumer 6/7] COPY lecteur.py consumer.py ./
+#23 DONE 0.0s
+
+#24 [consumer 7/7] RUN adduser -D -u 10001 appuser
+#24 DONE 0.2s
+
+#25 [consumer] exporting to image
+#25 exporting layers
+#25 exporting layers 0.3s done
+#25 writing image sha256:135518844a63ccda3e450d78ad36d918e51a36687ca52ddecf0342ad2fb9e5eb
+#25 writing image sha256:135518844a63ccda3e450d78ad36d918e51a36687ca52ddecf0342ad2fb9e5eb done
+#25 naming to docker.io/library/vitals-consumer:0.1 done
+#25 DONE 0.3s
+
+#26 [consumer] resolving provenance for metadata file
+#26 DONE 0.0s
+ Image vitals-producer:0.1 Built 
+ Image vitals-consumer:0.1 Built 
+ Container vitals-kafka Running 
+ Container vitals-postgres Running 
+ Container vitals-producer Running 
+ Container s1-vitals-stream-consumer-1 Creating 
+ Container s1-vitals-stream-consumer-1 Created 
+ Container vitals-kafka Waiting 
+ Container vitals-postgres Waiting 
+ Container vitals-kafka Waiting 
+ Container vitals-postgres Healthy 
+ Container vitals-kafka Healthy 
+ Container vitals-kafka Healthy 
+ Container s1-vitals-stream-consumer-1 Starting 
+ Container s1-vitals-stream-consumer-1 Started 
+NAME                          IMAGE                                                                                                        COMMAND                  SERVICE    CREATED          STATUS                          PORTS
+s1-vitals-stream-consumer-1   vitals-consumer:0.1                                                                                          "python3.12 consumer…"   consumer   26 seconds ago   Restarting (2) 11 seconds ago   
+vitals-kafka                  confluentinc/cp-kafka:7.8.0                                                                                  "/etc/confluent/dock…"   kafka      27 minutes ago   Up 27 minutes (healthy)         0.0.0.0:29092->29092/tcp, [::]:29092->29092/tcp
+vitals-postgres               cgr.dev/chainguard/postgres:latest@sha256:0926ac7262a2c1963179eb939cd5d610e1be3ecca90b4b5cad8db8df16fab87e   "/usr/bin/docker-ent…"   postgres   2 minutes ago    Up 2 minutes (healthy)          0.0.0.0:55432->5432/tcp, [::]:55432->5432/tcp
+vitals-producer               vitals-producer:0.1                                                                                          "python producer.py"     producer   23 minutes ago   Up 23 minutes (healthy)         
+Services healthy : 3
+consumer-1  | python3.12: can't open file '/app/consumer.py': [Errno 13] Permission denied
+consumer-1  | python3.12: can't open file '/app/consumer.py': [Errno 13] Permission denied
+consumer-1  | python3.12: can't open file '/app/consumer.py': [Errno 13] Permission denied
+consumer-1  | python3.12: can't open file '/app/consumer.py': [Errno 13] Permission denied
+consumer-1  | python3.12: can't open file '/app/consumer.py': [Errno 13] Permission denied
+consumer-1  | python3.12: can't open file '/app/consumer.py': [Errno 13] Permission denied
+consumer-1  | python3.12: can't open file '/app/consumer.py': [Errno 13] Permission denied
+consumer-1  | python3.12: can't open file '/app/consumer.py': [Errno 13] Permission denied
+lignes_totales : 16585 -> 16585 en 60 s, soit +0 lignes
+
+>> FIN partie4 (15:39:37)

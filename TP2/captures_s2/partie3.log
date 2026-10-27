@@ -1,0 +1,62 @@
+>> s2.sh partie3 — 2026-10-27 15:27:50
+>> Espace disque libre : 4 Go
+>> ATTENTION : moins de 10 Go libres, risque de disque plein (images PostgreSQL et consommateur)
+>> Docker OK
+
+================ 3.1 Deux puis trois consommateurs (MESURES 7 et 8) (15:27:55)
+cA seul           : cA=[0, 1, 2, 3, 4, 5]
+cA + cB           : cA=[0, 1, 2] cB=[3, 4, 5]
+cA + cB + cC      : cA=[0, 1] cB=[2, 3] cC=[4, 5]
+-- vue du broker :
+
+GROUP               TOPIC           PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG             CONSUMER-ID                                     HOST            CLIENT-ID
+vitals-explo-groupe mimic-vitals    1          1873            1876            3               lecteur-cA-654be1bd-ba05-4b5c-ab11-3a2792045c4d /192.168.65.1   lecteur-cA
+vitals-explo-groupe mimic-vitals    0          4047            4056            9               lecteur-cA-654be1bd-ba05-4b5c-ab11-3a2792045c4d /192.168.65.1   lecteur-cA
+vitals-explo-groupe mimic-vitals    5          1650            1656            6               lecteur-cC-8b16d429-cdb4-4732-8e5f-5eb07673ea38 /192.168.65.1   lecteur-cC
+vitals-explo-groupe mimic-vitals    4          2475            2484            9               lecteur-cC-8b16d429-cdb4-4732-8e5f-5eb07673ea38 /192.168.65.1   lecteur-cC
+vitals-explo-groupe mimic-vitals    2          -               524             -               lecteur-cB-e9e97462-66c2-411d-8e29-4d45499f7a54 /192.168.65.1   lecteur-cB
+vitals-explo-groupe mimic-vitals    3          2475            2484            9               lecteur-cB-e9e97462-66c2-411d-8e29-4d45499f7a54 /192.168.65.1   lecteur-cB>> 60 s a trois...
+MESURE 8 : cA partitions=[0, 1] lus a l'arrivee de cC=96 lus final=365 -> 60 s a trois : 269 messages ; patients couverts : 4 P005, P007, P010, P012
+MESURE 8 : cB partitions=[2, 3] lus a l'arrivee de cC=48 lus final=266 -> 60 s a trois : 218 messages ; patients couverts : 3 P003, P008, P009
+MESURE 8 : cC partitions=[4, 5] lus a l'arrivee de cC=0 lus final=390 -> 60 s a trois : 390 messages ; patients couverts : 5 P001, P002, P004, P006, P011
+
+================ 3.2 Un consommateur de trop (MESURE 9) (15:29:27)
+>> 7 instances lancees ; stabilisation 20 s puis 30 s d'observation
+
+GROUP               TOPIC           PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG             CONSUMER-ID                                     HOST            CLIENT-ID
+vitals-explo-groupe mimic-vitals    3          2865            2868            3               lecteur-s4-dd8df742-5b57-4398-ae7f-701cec2112de /192.168.65.1   lecteur-s4
+vitals-explo-groupe mimic-vitals    1          2001            2004            3               lecteur-s2-ab93046a-6aa3-490f-a791-9796314c46e6 /192.168.65.1   lecteur-s2
+vitals-explo-groupe mimic-vitals    0          4428            4440            12              lecteur-s1-e2b98970-80a7-486c-bd00-3669690409ab /192.168.65.1   lecteur-s1
+vitals-explo-groupe mimic-vitals    5          1904            1912            8               lecteur-s6-f8b02b5d-928e-4c73-b779-c9085a296057 /192.168.65.1   lecteur-s6
+vitals-explo-groupe mimic-vitals    2          -               524             -               lecteur-s3-afa0e68b-98b7-4144-bfd2-2695c7a9cf8d /192.168.65.1   lecteur-s3
+vitals-explo-groupe mimic-vitals    4          2853            2868            15              lecteur-s5-fcb2f4bc-8d65-4789-809e-206ff5ae39f2 /192.168.65.1   lecteur-s5s1 : derniere attribution=[0]  lus pendant les 30 s=148  (lus total=231)
+s2 : derniere attribution=[1]  lus pendant les 30 s=51  (lus total=63)
+s3 : derniere attribution=[2]  lus pendant les 30 s=0  (lus total=9)
+s4 : derniere attribution=[3]  lus pendant les 30 s=148  (lus total=166)
+s5 : derniere attribution=[4]  lus pendant les 30 s=148  (lus total=160)
+s6 : derniere attribution=[5]  lus pendant les 30 s=99  (lus total=107)
+s7 : derniere attribution=[aucune]  lus pendant les 30 s=0  (lus total=0)
+MESURE 9 : partitions=6 instances=7 inactives=[aucune]:1
+
+================ 3.3 Perte d'un consommateur (MESURE 10) (15:30:28)
+Stable : cA=[0, 1, 2] cB=[3, 4, 5]
+MESURE 10 A (arret propre) : cA recupere tout apres 3,9 s -> [0, 1, 2, 3, 4, 5]
+MESURE 11 range : RETRAIT de cA pendant le depart de cB = 1 :
+[cA] RETRAIT t=15:30:43 lus=91 partitions=[0, 1, 2]
+Stable : cA=[0, 1, 2] cB=[3, 4, 5]
+/Users/korich/s1-vitals-stream/s2.sh: line 61:  6064 Killed: 9               KAFKA_BOOTSTRAP=localhost:29092 VITALS_TOPIC=$TOPIC CONSUMER_GROUP="$1" AUTO_OFFSET_RESET="$2" AUTO_COMMIT="$3" INSTANCE="$4" PARTITION_STRATEGY="${6:-range}" $PY consumer/lecteur.py > "$5" 2>&1
+MESURE 10 B (arret brutal) : cA recupere tout apres 46,0 s -> [0, 1, 2, 3, 4, 5]
+
+================ 3.4 Strategie cooperative-sticky (MESURE 11) (15:31:41)
+Lignes de cA avant le depart de cB :
+[cA] ATTRIBUTION t=15:31:42 lus=0 partitions=[0, 1, 2, 3, 4, 5]
+[cA] RETRAIT t=15:31:45 lus=36 partitions=[0, 1, 2]
+[cA] ATTRIBUTION t=15:31:45 lus=36 partitions=[aucune]
+[cA] ATTRIBUTION t=15:31:48 lus=60 partitions=[aucune]
+Lignes de cB :
+[cB] ATTRIBUTION t=15:31:45 lus=0 partitions=[aucune]
+[cB] ATTRIBUTION t=15:31:48 lus=0 partitions=[2, 1, 0]
+Reattribution a cA apres 1,4 s : [cA] ATTRIBUTION t=15:31:54 lus=108 partitions=[2, 1, 0]
+MESURE 11 cooperative-sticky : RETRAIT de cA pendant le depart de cB = 0 :
+
+>> FIN partie3 (15:31:59)

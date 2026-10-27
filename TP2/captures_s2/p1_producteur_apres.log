@@ -1,0 +1,7 @@
+Producteur démarré : bootstrap=localhost:29092 topic=mimic-vitals patients=12 intervalle=1.0s
+===== BILAN =====
+Messages envoyés : 180
+Non livrés (échecs) : 0
+Restés dans le buffer après flush : 0
+Durée : 15.1 s
+Débit : 11.93 msg/s

@@ -1,0 +1,103 @@
+>> s2.sh partie4b — 2026-10-27 15:47:34
+>> Espace disque libre : 5 Go
+>> ATTENTION : moins de 10 Go libres, risque de disque plein (images PostgreSQL et consommateur)
+>> Docker OK
+
+================ Mesure 12 retrouvee dans les journaux de PostgreSQL (15:47:36)
+Conteneur demarre : 2026-10-27T14:36:18.633387342Z
+Derniere ligne 'ready to accept connections' : 2026-10-27T14:36:20.216962051Z
+MESURE 12 : serveur pret 1.6 s apres le demarrage ; healthy au premier test suivant (interval 5s, start_period 10s) -> environ 5 s
+NAME              IMAGE                                                                                                        COMMAND                  SERVICE    CREATED          STATUS                    PORTS
+vitals-postgres   cgr.dev/chainguard/postgres:latest@sha256:0926ac7262a2c1963179eb939cd5d610e1be3ecca90b4b5cad8db8df16fab87e   "/usr/bin/docker-ent…"   postgres   11 minutes ago   Up 11 minutes (healthy)   0.0.0.0:55432->5432/tcp, [::]:55432->5432/tcp
+
+================ 4.4 Chaine complete dans le Compose (MESURE 14) (15:47:39)
+ Image vitals-consumer:0.1 Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 550B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 1.09kB done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for cgr.dev/chainguard/wolfi-base:latest@sha256:0b179206ab162b12a43bacea1b525a4023e0272005c92d08555c61b1beaedc40
+#3 DONE 0.0s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 72B done
+#4 DONE 0.0s
+
+#5 [1/7] FROM cgr.dev/chainguard/wolfi-base:latest@sha256:0b179206ab162b12a43bacea1b525a4023e0272005c92d08555c61b1beaedc40
+#5 DONE 0.0s
+
+#6 [internal] load build context
+#6 transferring context: 98B done
+#6 DONE 0.0s
+
+#7 [2/7] RUN apk add --no-cache python-3.12
+#7 CACHED
+
+#8 [4/7] COPY requirements.txt ./
+#8 CACHED
+
+#9 [5/7] RUN apk add --no-cache py3.12-pip     && python3.12 -m pip install --no-cache-dir --break-system-packages -r requirements.txt     && apk del --no-cache py3.12-pip
+#9 CACHED
+
+#10 [3/7] WORKDIR /app
+#10 CACHED
+
+#11 [6/7] COPY lecteur.py consumer.py ./
+#11 CACHED
+
+#12 [7/7] RUN chmod -R a+rX /app && adduser -D -u 10001 appuser
+#12 DONE 0.2s
+
+#13 exporting to image
+#13 exporting layers done
+#13 writing image sha256:a1919dea31cc85cd94974ca7649bd1061a710ab3f21c9dc5da32efae4b1e77c6 done
+#13 naming to docker.io/library/vitals-consumer:0.1 done
+#13 DONE 0.0s
+
+#14 resolving provenance for metadata file
+#14 DONE 0.0s
+ Image vitals-consumer:0.1 Built 
+ Container vitals-postgres Running 
+ Container vitals-kafka Running 
+ Container s1-vitals-stream-consumer-1 Recreate 
+ Container s1-vitals-stream-consumer-1 Recreated 
+ Container vitals-postgres Waiting 
+ Container vitals-kafka Waiting 
+ Container vitals-postgres Healthy 
+ Container vitals-kafka Healthy 
+ Container s1-vitals-stream-consumer-1 Starting 
+ Container s1-vitals-stream-consumer-1 Started 
+NAME                          IMAGE                                                                                                        COMMAND                  SERVICE    CREATED          STATUS                    PORTS
+s1-vitals-stream-consumer-1   vitals-consumer:0.1                                                                                          "python3.12 consumer…"   consumer   27 seconds ago   Up 26 seconds             
+vitals-kafka                  confluentinc/cp-kafka:7.8.0                                                                                  "/etc/confluent/dock…"   kafka      37 minutes ago   Up 37 minutes (healthy)   0.0.0.0:29092->29092/tcp, [::]:29092->29092/tcp
+vitals-postgres               cgr.dev/chainguard/postgres:latest@sha256:0926ac7262a2c1963179eb939cd5d610e1be3ecca90b4b5cad8db8df16fab87e   "/usr/bin/docker-ent…"   postgres   11 minutes ago   Up 11 minutes (healthy)   0.0.0.0:55432->5432/tcp, [::]:55432->5432/tcp
+vitals-producer               vitals-producer:0.1                                                                                          "python producer.py"     producer   33 minutes ago   Up 33 minutes (healthy)   
+Services healthy : 3
+consumer-1  | 14:47:42 LOT taille=200 inseres=200 doublons=0 lus=4600
+consumer-1  | 14:47:42 LOT taille=200 inseres=200 doublons=0 lus=4800
+consumer-1  | 14:47:42 LOT taille=200 inseres=200 doublons=0 lus=5000
+consumer-1  | 14:47:42 LOT taille=200 inseres=200 doublons=0 lus=5200
+consumer-1  | 14:47:42 LOT taille=200 inseres=200 doublons=0 lus=5400
+consumer-1  | 14:47:42 LOT taille=200 inseres=200 doublons=0 lus=5600
+consumer-1  | 14:47:42 LOT taille=200 inseres=200 doublons=0 lus=5800
+consumer-1  | 14:47:42 LOT taille=200 inseres=200 doublons=0 lus=6000
+consumer-1  | 14:47:42 LOT taille=200 inseres=200 doublons=0 lus=6200
+consumer-1  | 14:47:42 LOT taille=200 inseres=200 doublons=0 lus=6400
+consumer-1  | 14:47:42 LOT taille=200 inseres=200 doublons=0 lus=6600
+consumer-1  | 14:47:42 LOT taille=200 inseres=200 doublons=0 lus=6800
+consumer-1  | 14:47:42 LOT taille=200 inseres=200 doublons=0 lus=7000
+consumer-1  | 14:47:42 LOT taille=200 inseres=200 doublons=0 lus=7200
+consumer-1  | 14:47:42 LOT taille=200 inseres=200 doublons=0 lus=7400
+consumer-1  | 14:47:48 LOT taille=76 inseres=76 doublons=0 lus=7476
+consumer-1  | 14:47:53 LOT taille=59 inseres=59 doublons=0 lus=7535
+consumer-1  | 14:47:58 LOT taille=60 inseres=60 doublons=0 lus=7595
+consumer-1  | 14:48:03 LOT taille=60 inseres=60 doublons=0 lus=7655
+consumer-1  | 14:48:08 LOT taille=61 inseres=61 doublons=0 lus=7716
+lignes_totales : 24301 -> 25044 en 60 s, soit +743 lignes
+Taille moyenne des lots sur 60 s : 61.9 (sur 12 lots)
+
+>> FIN partie4b (15:49:11)

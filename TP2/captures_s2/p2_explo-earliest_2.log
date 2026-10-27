@@ -1,0 +1,9 @@
+[c1] DEMARRAGE t=15:17:33 groupe=explo-earliest reset=earliest auto_commit=True strategie=range
+[c1] ATTRIBUTION t=15:17:33 lus=0 partitions=[0, 1, 2, 3, 4, 5]
+[c1] lus=50 partition=3 offset=561 patient=P003
+[c1] lus=100 partition=3 offset=573 patient=P003
+[c1] lus=150 partition=4 offset=585 patient=P002
+[c1] lus=200 partition=5 offset=399 patient=P004
+[c1] lus=250 partition=4 offset=610 patient=P006
+[c1] FIN t=15:17:53 lus=264 repartition={0:65, 1:22, 3:66, 4:66, 5:45}
+[c1] RETRAIT t=15:17:53 lus=264 partitions=[0, 1, 2, 3, 4, 5]

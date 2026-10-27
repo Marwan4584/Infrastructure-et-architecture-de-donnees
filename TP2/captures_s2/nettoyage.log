@@ -1,0 +1,57 @@
+>> s2.sh nettoyage — 2026-10-27 16:08:02
+>> Espace disque libre : 4 Go
+>> ATTENTION : moins de 10 Go libres, risque de disque plein (images PostgreSQL et consommateur)
+>> Docker OK
+
+================ Sauvegarde du schema puis destruction (16:08:03)
+schema sauvegarde :       80 lignes
+ Container vitals-producer Stopping 
+ Container s1-vitals-stream-consumer-2 Stopping 
+ Container vitals-producer Stopped 
+ Container vitals-producer Removing 
+ Container s1-vitals-stream-consumer-2 Stopped 
+ Container s1-vitals-stream-consumer-2 Removing 
+ Container vitals-producer Removed 
+ Container s1-vitals-stream-consumer-2 Removed 
+ Container vitals-postgres Stopping 
+ Container vitals-kafka Stopping 
+ Container vitals-postgres Stopped 
+ Container vitals-postgres Removing 
+ Container vitals-postgres Removed 
+ Container vitals-kafka Stopped 
+ Container vitals-kafka Removing 
+ Container vitals-kafka Removed 
+ Network s1-vitals-stream_vitals-net Removing 
+ Volume s1-vitals-stream_vitals-logs Removing 
+ Volume s1-vitals-stream_pg-data Removing 
+ Volume s1-vitals-stream_kafka-data Removing 
+ Volume s1-vitals-stream_vitals-logs Removed 
+ Volume s1-vitals-stream_pg-data Removed 
+ Volume s1-vitals-stream_kafka-data Removed 
+ Network s1-vitals-stream_vitals-net Removed 
+NAME      IMAGE     COMMAND   SERVICE   CREATED   STATUS    PORTS
+Volumes restants : aucun
+ Network s1-vitals-stream_vitals-net Creating 
+ Network s1-vitals-stream_vitals-net Created 
+ Volume s1-vitals-stream_kafka-data Creating 
+ Volume s1-vitals-stream_kafka-data Created 
+ Container vitals-kafka Creating 
+ Container vitals-kafka Created 
+ Container vitals-kafka Starting 
+ Container vitals-kafka Started 
+-- groupes apres down -v :
+ Container vitals-kafka Stopping 
+ Container vitals-kafka Stopped 
+ Container vitals-kafka Removing 
+ Container vitals-kafka Removed 
+ Volume s1-vitals-stream_kafka-data Removing 
+ Network s1-vitals-stream_vitals-net Removing 
+ Volume s1-vitals-stream_kafka-data Removed 
+ Network s1-vitals-stream_vitals-net Removed 
+TYPE            TOTAL     ACTIVE    SIZE      RECLAIMABLE
+Images          8         0         2.783GB   2.656GB (95%)
+Containers      0         0         0B        0B
+Local Volumes   1         0         0B        0B
+Build Cache     53        0         875MB     17.87kB
+
+================ Archive du livrable (16:08:37)

@@ -1,0 +1,76 @@
+>> s2.sh reparer — 2026-10-27 15:10:14
+>> Espace disque libre : 6 Go
+>> Docker OK
+
+================ Reparation des images Docker (15:10:16)
+ Container vitals-producer Stopping 
+ Container vitals-producer Stopped 
+ Container vitals-producer Removing 
+ Container vitals-producer Removed 
+ Container vitals-kafka Stopping 
+ Container vitals-kafka Stopped 
+ Container vitals-kafka Removing 
+ Container vitals-kafka Removed 
+ Network s1-vitals-stream_vitals-net Removing 
+ Network s1-vitals-stream_vitals-net Removed 
+supprimee : confluentinc/cp-kafka:7.8.0
+supprimee : vitals-producer:0.1
+supprimee : vitals-consumer:0.1
+Deleted Images:
+untagged: acrdermascankorich.azurecr.io/dermascan-api@sha256:d979c792ceb0652b7aff980ffa2be335a207396032392560150b470316ba8ff0
+deleted: sha256:39a9b405a7c9cb5df5c2a219ef9f3fad6dffbeb2ece5150cb16abb3fb345ffb2
+
+Total reclaimed space: 0B
+ID						RECLAIMABLE	SIZE		LAST ACCESSED
+xmj9d3detextvc1bwjgzdcwcz*              	true 		2.969kB   	About a minute ago
+97nbtxg40fluszvrenttj3fcl*              	true 	1.027kB   	28 hours ago
+9xq0m2ybokv99krba6wkxf9kl*              	true 	13.62kB   	28 hours ago
+k81wx204bdivnvixz2qbysxod*              	true 	84B       	28 hours ago
+c0fa90uitq0ec5hf53ed5399x               	true 	7.346kB   	About a minute ago
+tr3brl9aduixn3eyjlilij25o*              	true 	378B      	About a minute ago
+e55ow4aadkt4sp30jh8xi8y8b               	true 	22.54kB   	2 weeks ago
+33uzgo9p0eydj5mnoi0ol1827*              	true 	43B       	About a minute ago
+gt81558pse4gfnh9w0wv79aen               	true 	3.367kB   	Less than a second ago
+qeazp5qs2895cga8mnhwoe95r               	true 	2.946kB   	About a minute ago
+7bhcl2r6ivi1okjuo7kq5uci0               	true 	10.15kB   	Less than a second ago
+m93yasb3grmyx922pw7upef4i               	true 	48.89MB   	About a minute ago
+29bt0dv4hcwp6nzh41gfm0b3w               	true 	349.2MB   	Less than a second ago
+pnbt0rw2m7ybb5kqnt5l8jezr               	true 	23B       	About a minute ago
+zp07u7p3l1vb5catmbysdxnts               	true 	0B        	About a minute ago
+y7ec8x16m91bthxuxrrvgryje               	true 	105B      	Less than a second ago
+ns3puipm5tnhxtiyou2nxu10m               	true 	0B        	About a minute ago
+f6y4sxaae03atumujmd49k9bp               	true 	0B        	Less than a second ago
+woav53znj8prvmu1irksa5wjl               	true 	0B        	About a minute ago
+lvwwvxn0rcduixkw8yzwt6mj8               	true 	0B        	Less than a second ago
+jvr2fvkuto2uo6zn7c4da9gta               	true 	0B        	About a minute ago
+adk3lhadkcjw9mlecnq72qef3               	true 	0B        	Less than a second ago
+gqbxiuztz2v8kr5k1jfmbhndw               	true 	0B        	About a minute ago
+whwj88jrnt7p0p5cwhofvuow9               	true 	0B        	Less than a second ago
+slzejzzppe8lh2kvf2aipt2zp               	true 	0B        	Less than a second ago
+Total:	398.1MB
+-- retelechargement propre de Kafka :
+ Image confluentinc/cp-kafka:7.8.0 Pulling 
+ Image confluentinc/cp-kafka:7.8.0 Pulled 
+cp-kafka:7.8.0 retelechargee
+ Network s1-vitals-stream_vitals-net Creating 
+ Network s1-vitals-stream_vitals-net Created 
+ Container vitals-kafka Creating 
+ Container vitals-kafka Created 
+ Container vitals-kafka Starting 
+ Container vitals-kafka Started 
+ECHEC : Kafka ne demarre toujours pas :
+vitals-kafka  | 	remote.log.manager.task.retry.backoff.ms = 500
+vitals-kafka  | 	remote.log.manager.task.retry.jitter = 0.2
+vitals-kafka  | 	remote.log.manager.thread.pool.size = 10
+vitals-kafka  | 	remote.log.metadata.custom.metadata.max.bytes = 128
+vitals-kafka  | 	remote.log.metadata.manager.class.name = org.apache.kafka.server.log.remote.metadata.storage.TopicBasedRemoteLogMetadataManager
+vitals-kafka  | 	remote.log.metadata.manager.class.path = null
+vitals-kafka  | 	remote.log.metadata.manager.impl.prefix = rlmm.config.
+vitals-kafka  | 	remote.log.metadata.manager.listener.name = null
+vitals-kafka  | 	remote.log.reader.max.pending.tasks = 100
+vitals-kafka  | 	remote.log.reader.threads = 10
+vitals-kafka  | 	remote.log.storage.manager.class.name = null
+vitals-kafka  | 	remote.log.storage.manager.class.path = null
+vitals-kafka  | 	remote.log.storage.manager.impl.prefix = rsm.config.
+vitals-kafka  | 	remote.log.storage.system.enable = false
+vitals-kafka  |  (org.apache.kafka.server.log.remote.storage.RemoteLogManagerConfig)

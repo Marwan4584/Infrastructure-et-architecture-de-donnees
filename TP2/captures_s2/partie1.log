@@ -1,0 +1,181 @@
+>> s2.sh partie1 — 2026-10-27 15:13:30
+>> Espace disque libre : 5 Go
+>> Docker OK
+
+================ Verification des prerequis (15:13:32)
+docker compose config --quiet : compose OK (sortie vide)
+WARNING: This output is designed for human readability. For machine-readable output, please use --format.
+confluentinc/cp-kafka:7.8.0                         4c8c16982ba4       1.11GB             0B   U    
+-rw-------@ 1 korich  staff  3825 27 oct.  14:37 docker-compose.yml
+-rw-r--r--  1 korich  staff  2946  9 oct.  09:29 producer/producer.py
+Volume kafka-data : 1 trouve(s)
+PostgreSQL natif : aucune
+
+[notice] A new release of pip is available: 23.2.1 -> 26.2.2
+[notice] To update, run: /Users/korich/s1-vitals-stream/.venv/bin/python -m pip install --upgrade pip
+venv : dependances OK
+
+================ 1.1 Broker seul (15:13:41)
+ Container vitals-kafka Running 
+kafka healthy apres 0,2 s
+mimic-vitals
+Topic: mimic-vitals	TopicId: LUcvuefrQZW_QgWwZEdpsw	PartitionCount: 3	ReplicationFactor: 1	Configs: 
+	Topic: mimic-vitals	Partition: 0	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: mimic-vitals	Partition: 1	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: mimic-vitals	Partition: 2	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+MESURE 1 : partitions avant = 3 ; somme des offsets de fin = 3000
+
+================ 1.2 Repartition avant modification (producteur local 15 s) (15:13:48)
+Messages envoyés : 144
+Débit : 11.94 msg/s
+-- MESURE 2 (tout le topic depuis le debut) :
+| Partition | Patients observés | Nombre de patients | Messages lus |
+|---|---|---|---|
+| 0 | P003, P005, P008, P009, P010, P012 | 6 | 72 |
+| 1 | P002, P006, P007, P011 | 4 | 48 |
+| 2 | P001, P004 | 2 | 24 |
+
+================ 1.3 Passage a 6 partitions (15:14:05)
+Topic: mimic-vitals	TopicId: LUcvuefrQZW_QgWwZEdpsw	PartitionCount: 6	ReplicationFactor: 1	Configs: 
+	Topic: mimic-vitals	Partition: 0	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: mimic-vitals	Partition: 1	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: mimic-vitals	Partition: 2	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: mimic-vitals	Partition: 3	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: mimic-vitals	Partition: 4	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: mimic-vitals	Partition: 5	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+Offsets de fin releves (bornes de depart) : {"0": 1572, "1": 1048, "2": 524, "3": 0, "4": 0, "5": 0}
+Messages envoyés : 180
+Débit : 11.93 msg/s
+-- MESURE 3 (uniquement les messages produits apres la modification) :
+| Partition | Patients observés | Nombre de patients | Messages lus |
+|---|---|---|---|
+| 0 | P005, P010, P012 | 3 | 45 |
+| 1 | P007 | 1 | 15 |
+| 2 | aucun | 0 | 0 |
+| 3 | P003, P008, P009 | 3 | 45 |
+| 4 | P002, P006, P011 | 3 | 45 |
+| 5 | P001, P004 | 2 | 30 |
+
+================ 1.4 Controle de fin de partie (15:14:24)
+Topic: mimic-vitals	TopicId: LUcvuefrQZW_QgWwZEdpsw	PartitionCount: 6	ReplicationFactor: 1	Configs: 
+	Topic: mimic-vitals	Partition: 0	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: mimic-vitals	Partition: 1	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: mimic-vitals	Partition: 2	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: mimic-vitals	Partition: 3	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: mimic-vitals	Partition: 4	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: mimic-vitals	Partition: 5	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+mimic-vitals:0:1617
+mimic-vitals:1:1063
+mimic-vitals:2:524
+mimic-vitals:3:45
+mimic-vitals:4:45
+mimic-vitals:5:30
+Somme des offsets de fin : 3324
+ Image vitals-producer:0.1 Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 550B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 417B done
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/python:3.12-slim
+#3 DONE 1.9s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 83B done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 3.05kB done
+#5 DONE 0.0s
+
+#6 [1/6] FROM docker.io/library/python:3.12-slim@sha256:12316debbfb86890f6b2d825820612741ba527ad5a44e3902759141d572bfe8f
+#6 resolve docker.io/library/python:3.12-slim@sha256:12316debbfb86890f6b2d825820612741ba527ad5a44e3902759141d572bfe8f done
+#6 sha256:12316debbfb86890f6b2d825820612741ba527ad5a44e3902759141d572bfe8f 10.37kB / 10.37kB done
+#6 sha256:0ced713d9b8336172d981d8f25f2422b6782bdad019fda4cb653c6ee187430de 1.75kB / 1.75kB done
+#6 sha256:7d0134fc196a9daa289acd038dd1c95b6873cacfaa4d6ea97c51501e0af515a3 5.68kB / 5.68kB done
+#6 sha256:ddc0c1e36a6793411b6c8d48e1ddad2987405d377da92bcf532ed3181c2e4d62 0B / 30.20MB 0.1s
+#6 sha256:1fe8ddfb8cbbdc5855c68e22392842a3bf0c0bf8d87eb204c158c96f664e2182 0B / 1.53MB 0.1s
+#6 sha256:ff13255a981b23e12e8a9c280a29ba23dcfd066500231f0fda0200d4a1314a7f 0B / 12.06MB 0.1s
+#6 sha256:1fe8ddfb8cbbdc5855c68e22392842a3bf0c0bf8d87eb204c158c96f664e2182 1.05MB / 1.53MB 0.5s
+#6 sha256:1fe8ddfb8cbbdc5855c68e22392842a3bf0c0bf8d87eb204c158c96f664e2182 1.53MB / 1.53MB 0.5s done
+#6 sha256:3634f8258f7a1c7d6a39d89ead1c23218f16d88d64fbe6be2a2093726ae046a7 0B / 248B 0.6s
+#6 sha256:ddc0c1e36a6793411b6c8d48e1ddad2987405d377da92bcf532ed3181c2e4d62 4.19MB / 30.20MB 0.9s
+#6 sha256:3634f8258f7a1c7d6a39d89ead1c23218f16d88d64fbe6be2a2093726ae046a7 248B / 248B 0.8s done
+#6 sha256:ddc0c1e36a6793411b6c8d48e1ddad2987405d377da92bcf532ed3181c2e4d62 6.29MB / 30.20MB 1.0s
+#6 sha256:ddc0c1e36a6793411b6c8d48e1ddad2987405d377da92bcf532ed3181c2e4d62 9.44MB / 30.20MB 1.2s
+#6 sha256:ddc0c1e36a6793411b6c8d48e1ddad2987405d377da92bcf532ed3181c2e4d62 12.58MB / 30.20MB 1.4s
+#6 sha256:ff13255a981b23e12e8a9c280a29ba23dcfd066500231f0fda0200d4a1314a7f 1.05MB / 12.06MB 1.4s
+#6 sha256:ddc0c1e36a6793411b6c8d48e1ddad2987405d377da92bcf532ed3181c2e4d62 16.78MB / 30.20MB 1.7s
+#6 sha256:ddc0c1e36a6793411b6c8d48e1ddad2987405d377da92bcf532ed3181c2e4d62 20.97MB / 30.20MB 1.9s
+#6 sha256:ddc0c1e36a6793411b6c8d48e1ddad2987405d377da92bcf532ed3181c2e4d62 23.07MB / 30.20MB 2.1s
+#6 sha256:ddc0c1e36a6793411b6c8d48e1ddad2987405d377da92bcf532ed3181c2e4d62 26.21MB / 30.20MB 2.3s
+#6 sha256:ff13255a981b23e12e8a9c280a29ba23dcfd066500231f0fda0200d4a1314a7f 2.10MB / 12.06MB 2.3s
+#6 sha256:ddc0c1e36a6793411b6c8d48e1ddad2987405d377da92bcf532ed3181c2e4d62 30.20MB / 30.20MB 2.5s done
+#6 extracting sha256:ddc0c1e36a6793411b6c8d48e1ddad2987405d377da92bcf532ed3181c2e4d62
+#6 sha256:ff13255a981b23e12e8a9c280a29ba23dcfd066500231f0fda0200d4a1314a7f 3.15MB / 12.06MB 2.8s
+#6 sha256:ff13255a981b23e12e8a9c280a29ba23dcfd066500231f0fda0200d4a1314a7f 4.19MB / 12.06MB 3.3s
+#6 sha256:ff13255a981b23e12e8a9c280a29ba23dcfd066500231f0fda0200d4a1314a7f 5.24MB / 12.06MB 3.7s
+#6 extracting sha256:ddc0c1e36a6793411b6c8d48e1ddad2987405d377da92bcf532ed3181c2e4d62 1.2s done
+#6 extracting sha256:1fe8ddfb8cbbdc5855c68e22392842a3bf0c0bf8d87eb204c158c96f664e2182
+#6 sha256:ff13255a981b23e12e8a9c280a29ba23dcfd066500231f0fda0200d4a1314a7f 6.29MB / 12.06MB 4.2s
+#6 extracting sha256:1fe8ddfb8cbbdc5855c68e22392842a3bf0c0bf8d87eb204c158c96f664e2182 0.2s done
+#6 sha256:ff13255a981b23e12e8a9c280a29ba23dcfd066500231f0fda0200d4a1314a7f 7.34MB / 12.06MB 4.4s
+#6 sha256:ff13255a981b23e12e8a9c280a29ba23dcfd066500231f0fda0200d4a1314a7f 8.39MB / 12.06MB 4.7s
+#6 sha256:ff13255a981b23e12e8a9c280a29ba23dcfd066500231f0fda0200d4a1314a7f 9.44MB / 12.06MB 5.0s
+#6 sha256:ff13255a981b23e12e8a9c280a29ba23dcfd066500231f0fda0200d4a1314a7f 10.49MB / 12.06MB 5.2s
+#6 sha256:ff13255a981b23e12e8a9c280a29ba23dcfd066500231f0fda0200d4a1314a7f 11.53MB / 12.06MB 5.3s
+#6 sha256:ff13255a981b23e12e8a9c280a29ba23dcfd066500231f0fda0200d4a1314a7f 12.06MB / 12.06MB 5.4s done
+#6 extracting sha256:ff13255a981b23e12e8a9c280a29ba23dcfd066500231f0fda0200d4a1314a7f 0.1s
+#6 extracting sha256:ff13255a981b23e12e8a9c280a29ba23dcfd066500231f0fda0200d4a1314a7f 0.5s done
+#6 extracting sha256:3634f8258f7a1c7d6a39d89ead1c23218f16d88d64fbe6be2a2093726ae046a7
+#6 extracting sha256:3634f8258f7a1c7d6a39d89ead1c23218f16d88d64fbe6be2a2093726ae046a7 done
+#6 DONE 5.9s
+
+#7 [2/6] WORKDIR /app
+#7 DONE 0.3s
+
+#8 [3/6] COPY requirements.txt ./
+#8 DONE 0.0s
+
+#9 [4/6] RUN pip install --no-cache-dir -r requirements.txt
+#9 1.555 Collecting confluent-kafka==2.6.1 (from -r requirements.txt (line 1))
+#9 1.807   Downloading confluent_kafka-2.6.1-cp312-cp312-manylinux_2_28_aarch64.whl.metadata (51 kB)
+#9 1.920 Downloading confluent_kafka-2.6.1-cp312-cp312-manylinux_2_28_aarch64.whl (15.3 MB)
+#9 3.304    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 15.3/15.3 MB 11.6 MB/s eta 0:00:00
+#9 3.342 Installing collected packages: confluent-kafka
+#9 3.635 Successfully installed confluent-kafka-2.6.1
+#9 3.635 WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+#9 3.865 
+#9 3.865 [notice] A new release of pip is available: 25.0.1 -> 26.2.2
+#9 3.865 [notice] To update, run: pip install --upgrade pip
+#9 DONE 4.0s
+
+#10 [5/6] COPY producer.py ./
+#10 DONE 0.0s
+
+#11 [6/6] RUN useradd --uid 10001 --no-create-home --shell /usr/sbin/nologin appuser     && mkdir -p /app/logs     && chown -R appuser:appuser /app
+#11 DONE 0.2s
+
+#12 exporting to image
+#12 exporting layers 0.1s done
+#12 writing image sha256:6be93cede4ef85703160196cbb513125961936198b8d7ac2726065d67634f03f
+#12 writing image sha256:6be93cede4ef85703160196cbb513125961936198b8d7ac2726065d67634f03f done
+#12 naming to docker.io/library/vitals-producer:0.1 done
+#12 DONE 0.1s
+
+#13 resolving provenance for metadata file
+#13 DONE 0.0s
+ Image vitals-producer:0.1 Built 
+ Container vitals-kafka Running 
+ Container vitals-producer Creating 
+ Container vitals-producer Created 
+ Container vitals-kafka Waiting 
+ Container vitals-kafka Healthy 
+ Container vitals-producer Starting 
+ Container vitals-producer Started 
+vitals-producer  | Producteur démarré : bootstrap=kafka:9092 topic=mimic-vitals patients=12 intervalle=1.0s
+
+>> FIN partie1 (15:14:47)

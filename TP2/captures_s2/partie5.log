@@ -1,0 +1,233 @@
+>> s2.sh partie5 — 2026-10-27 15:51:24
+>> Espace disque libre : 5 Go
+>> ATTENTION : moins de 10 Go libres, risque de disque plein (images PostgreSQL et consommateur)
+>> Docker OK
+
+================ 5.1 Lag en regime nominal (MESURE 15) (15:51:36)
+t0+0s : somme des LAG = 23
+t0+30s : somme des LAG = 12
+t0+60s : somme des LAG = 11
+
+GROUP            TOPIC           PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG             CONSUMER-ID                                                 HOST            CLIENT-ID
+vitals-persister mimic-vitals    1          3332            3334            2               persister-241f4789842e-be80a269-0717-4a45-8600-938d0ec5423d /172.18.0.5     persister-241f4789842e
+vitals-persister mimic-vitals    2          524             524             0               persister-241f4789842e-be80a269-0717-4a45-8600-938d0ec5423d /172.18.0.5     persister-241f4789842e
+vitals-persister mimic-vitals    0          8425            8430            5               persister-241f4789842e-be80a269-0717-4a45-8600-938d0ec5423d /172.18.0.5     persister-241f4789842e
+vitals-persister mimic-vitals    5          4568            4572            4               persister-241f4789842e-be80a269-0717-4a45-8600-938d0ec5423d /172.18.0.5     persister-241f4789842e
+vitals-persister mimic-vitals    3          6852            6858            6               persister-241f4789842e-be80a269-0717-4a45-8600-938d0ec5423d /172.18.0.5     persister-241f4789842e
+vitals-persister mimic-vitals    4          6852            6858            6               persister-241f4789842e-be80a269-0717-4a45-8600-938d0ec5423d /172.18.0.5     persister-241f4789842e
+================ 5.2 Faire decrocher le consommateur (MESURE 16) (15:52:42)
+      BATCH_SIZE: "200"
+      INTERVAL_S: "1.0"
+ Container vitals-postgres Running 
+ Container vitals-kafka Running 
+ Container vitals-producer Recreate 
+ Container s1-vitals-stream-consumer-1 Recreate 
+ Container s1-vitals-stream-consumer-1 Recreated 
+ Container vitals-producer Recreated 
+ Container vitals-kafka Waiting 
+ Container vitals-postgres Waiting 
+ Container vitals-kafka Waiting 
+ Container vitals-postgres Healthy 
+ Container vitals-kafka Healthy 
+ Container vitals-producer Starting 
+ Container vitals-kafka Healthy 
+ Container s1-vitals-stream-consumer-1 Starting 
+ Container s1-vitals-stream-consumer-1 Started 
+ Container vitals-producer Started 
+INTERVAL_S=0.005
+consommateur bride a 0,05 CPU
+t0+0s : somme des LAG = 13258 
+t0+30s : somme des LAG = 69422 (ecart +56164)
+t0+60s : somme des LAG = 124389 (ecart +54967)
+t0+90s : somme des LAG = 178994 (ecart +54605)
+t0+120s : somme des LAG = 234421 (ecart +55427)
+Debit producteur mesure : 1856 msg/s
+
+================ Passage a deux consommateurs (MESURE 17) (15:55:00)
+Somme des LAG juste avant le --scale : 238837
+ Container vitals-postgres Running 
+ Container vitals-kafka Running 
+ Container vitals-producer Running 
+ Container s1-vitals-stream-consumer-1 Running 
+ Container s1-vitals-stream-consumer-2 Creating 
+ Container s1-vitals-stream-consumer-2 Created 
+ Container vitals-kafka Waiting 
+ Container vitals-postgres Waiting 
+ Container vitals-kafka Waiting 
+ Container vitals-postgres Healthy 
+ Container vitals-kafka Healthy 
+ Container s1-vitals-stream-consumer-2 Starting 
+ Container vitals-kafka Healthy 
+ Container s1-vitals-stream-consumer-2 Started 
+les 2 consommateurs bridés a 0,05 CPU
+
+GROUP            TOPIC           PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG             CONSUMER-ID                                                 HOST            CLIENT-ID
+vitals-persister mimic-vitals    2          524             524             0               persister-7f35f4e803a0-0250af99-ccdc-47e7-a344-f64151cb8180 /172.18.0.3     persister-7f35f4e803a0
+vitals-persister mimic-vitals    0          14333           79833           65500           persister-7f35f4e803a0-0250af99-ccdc-47e7-a344-f64151cb8180 /172.18.0.3     persister-7f35f4e803a0
+vitals-persister mimic-vitals    4          10467           78261           67794           persister-7f35f4e803a0-0250af99-ccdc-47e7-a344-f64151cb8180 /172.18.0.3     persister-7f35f4e803a0
+vitals-persister mimic-vitals    1          6253            27135           20882           persister-ab0889d23cab-fec6cf31-b749-40b6-a46b-babffdf88c29 /172.18.0.6     persister-ab0889d23cab
+vitals-persister mimic-vitals    5          6978            52174           45196           persister-ab0889d23cab-fec6cf31-b749-40b6-a46b-babffdf88c29 /172.18.0.6     persister-ab0889d23cab
+vitals-persister mimic-vitals    3          10471           78261           67790           persister-ab0889d23cab-fec6cf31-b749-40b6-a46b-babffdf88c29 /172.18.0.6     persister-ab0889d23cabSomme des LAG 60 s apres : 338345 ; membres du groupe : 2
+
+GROUP            TOPIC           PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG             CONSUMER-ID                                                 HOST            CLIENT-ID
+vitals-persister mimic-vitals    2          524             524             0               persister-7f35f4e803a0-0250af99-ccdc-47e7-a344-f64151cb8180 /172.18.0.3     persister-7f35f4e803a0
+vitals-persister mimic-vitals    0          19863           103317          83454           persister-7f35f4e803a0-0250af99-ccdc-47e7-a344-f64151cb8180 /172.18.0.3     persister-7f35f4e803a0
+vitals-persister mimic-vitals    4          14336           101746          87410           persister-7f35f4e803a0-0250af99-ccdc-47e7-a344-f64151cb8180 /172.18.0.3     persister-7f35f4e803a0
+vitals-persister mimic-vitals    1          11041           34964           23923           persister-ab0889d23cab-fec6cf31-b749-40b6-a46b-babffdf88c29 /172.18.0.6     persister-ab0889d23cab
+vitals-persister mimic-vitals    5          6978            67832           60854           persister-ab0889d23cab-fec6cf31-b749-40b6-a46b-babffdf88c29 /172.18.0.6     persister-ab0889d23cab
+vitals-persister mimic-vitals    3          15170           101748          86578           persister-ab0889d23cab-fec6cf31-b749-40b6-a46b-babffdf88c29 /172.18.0.6     persister-ab0889d23cab
+================ Retour a l'etat nominal (15:56:08)
+ Container vitals-postgres Running 
+ Container vitals-kafka Running 
+ Container vitals-producer Recreate 
+ Container s1-vitals-stream-consumer-2 Recreate 
+ Container s1-vitals-stream-consumer-1 Stopping 
+ Container vitals-producer Recreated 
+ Container s1-vitals-stream-consumer-1 Stopped 
+ Container s1-vitals-stream-consumer-1 Removing 
+ Container s1-vitals-stream-consumer-1 Removed 
+ Container s1-vitals-stream-consumer-2 Recreated 
+ Container vitals-postgres Waiting 
+ Container vitals-kafka Waiting 
+ Container vitals-kafka Waiting 
+ Container vitals-postgres Healthy 
+ Container vitals-kafka Healthy 
+ Container vitals-producer Starting 
+ Container vitals-kafka Healthy 
+ Container s1-vitals-stream-consumer-2 Starting 
+ Container vitals-producer Started 
+ Container s1-vitals-stream-consumer-2 Started 
+INTERVAL_S=1.0
+0
+>> rattrapage du retard accumule...
+15:56:12 lag=316791
+15:56:29 lag=23
+
+================ 5.3 Stockage indisponible (MESURE 18) (15:56:29)
+ lignes_totales | messages_distincts | patients_distincts |      premier_releve      |      dernier_releve       
+----------------+--------------------+--------------------+--------------------------+---------------------------
+         408505 |             408505 |                 12 | 2026-10-27 14:13:52.6+00 | 2026-10-27 14:56:27.45+00
+(1 row)
+
+lignes_totales avant la coupure : 408505
+ Container vitals-postgres Stopping 
+ Container vitals-postgres Stopped 
+>> postgres arrete a 15:56:32
++15s : consommateur running redemarrages=0 ; lag=263
++30s : consommateur running redemarrages=0 ; lag=455
++45s : consommateur running redemarrages=0 ; lag=659
++60s : consommateur running redemarrages=1 ; lag=851
++75s : consommateur running redemarrages=1 ; lag=1055
++90s : consommateur running redemarrages=1 ; lag=1247
+-- logs du consommateur pendant la coupure :
+consumer-2  | 14:57:19 ERREUR PostgreSQL injoignable (tentative 24/30) : could not translate host name "postgres" to address: Name or service not known
+consumer-2  | 14:57:21 ERREUR PostgreSQL injoignable (tentative 25/30) : could not translate host name "postgres" to address: Name or service not known
+consumer-2  | 14:57:23 ERREUR PostgreSQL injoignable (tentative 26/30) : could not translate host name "postgres" to address: Name or service not known
+consumer-2  | 14:57:25 ERREUR PostgreSQL injoignable (tentative 27/30) : could not translate host name "postgres" to address: Name or service not known
+consumer-2  | 14:57:27 ERREUR PostgreSQL injoignable (tentative 28/30) : could not translate host name "postgres" to address: Name or service not known
+consumer-2  | 14:57:29 ERREUR PostgreSQL injoignable (tentative 29/30) : could not translate host name "postgres" to address: Name or service not known
+consumer-2  | 14:57:31 ERREUR PostgreSQL injoignable (tentative 30/30) : could not translate host name "postgres" to address: Name or service not known
+consumer-2  | 14:57:33 ERREUR FATALE PostgreSQL : could not translate host name "postgres" to address: Name or service not known -> arret SANS acquitter les 63 lignes en memoire (elles seront relues au redemarrage)
+consumer-2  | 14:57:33 RETRAIT partitions=[0, 1, 2, 3, 4, 5]
+consumer-2  | 14:57:33 Arret. lus=343435 inseres=343372 ignores_doublons=0 rejets=0 duree=83.1s debit=4131.7 msg/s
+consumer-2  | 14:57:33 Demarrage : bootstrap=kafka:9092 topic=mimic-vitals groupe=vitals-persister lot=200 delai=5.0s base=postgres:5432/healthstream
+consumer-2  | 14:57:33 ERREUR PostgreSQL injoignable (tentative 1/30) : could not translate host name "postgres" to address: Name or service not known
+consumer-2  | 14:57:35 ERREUR PostgreSQL injoignable (tentative 2/30) : could not translate host name "postgres" to address: Name or service not known
+consumer-2  | 14:57:37 ERREUR PostgreSQL injoignable (tentative 3/30) : could not translate host name "postgres" to address: Name or service not known
+consumer-2  | 14:57:39 ERREUR PostgreSQL injoignable (tentative 4/30) : could not translate host name "postgres" to address: Name or service not known
+consumer-2  | 14:57:41 ERREUR PostgreSQL injoignable (tentative 5/30) : could not translate host name "postgres" to address: Name or service not known
+consumer-2  | 14:57:43 ERREUR PostgreSQL injoignable (tentative 6/30) : could not translate host name "postgres" to address: Name or service not known
+consumer-2  | 14:57:45 ERREUR PostgreSQL injoignable (tentative 7/30) : could not translate host name "postgres" to address: Name or service not known
+consumer-2  | 14:57:47 ERREUR PostgreSQL injoignable (tentative 8/30) : could not translate host name "postgres" to address: Name or service not known
+consumer-2  | 14:57:49 ERREUR PostgreSQL injoignable (tentative 9/30) : could not translate host name "postgres" to address: Name or service not known
+consumer-2  | 14:57:51 ERREUR PostgreSQL injoignable (tentative 10/30) : could not translate host name "postgres" to address: Name or service not known
+consumer-2  | 14:57:53 ERREUR PostgreSQL injoignable (tentative 11/30) : could not translate host name "postgres" to address: Name or service not known
+consumer-2  | 14:57:55 ERREUR PostgreSQL injoignable (tentative 12/30) : could not translate host name "postgres" to address: Name or service not known
+consumer-2  | 14:57:58 ERREUR PostgreSQL injoignable (tentative 13/30) : could not translate host name "postgres" to address: Name or service not known
+consumer-2  | 14:58:00 ERREUR PostgreSQL injoignable (tentative 14/30) : could not translate host name "postgres" to address: Name or service not known
+consumer-2  | 14:58:02 ERREUR PostgreSQL injoignable (tentative 15/30) : could not translate host name "postgres" to address: Name or service not known
+consumer-2  | 14:58:04 ERREUR PostgreSQL injoignable (tentative 16/30) : could not translate host name "postgres" to address: Name or service not known
+consumer-2  | 14:58:06 ERREUR PostgreSQL injoignable (tentative 17/30) : could not translate host name "postgres" to address: Name or service not known
+consumer-2  | 14:58:08 ERREUR PostgreSQL injoignable (tentative 18/30) : could not translate host name "postgres" to address: Name or service not known
+consumer-2  | 14:58:10 ERREUR PostgreSQL injoignable (tentative 19/30) : could not translate host name "postgres" to address: Name or service not known
+Premiere ligne d'erreur : consumer-2  | 14:56:32 ERREUR PostgreSQL pendant l'ecriture : server closed the connection unexpectedly -> lot de 63 lignes CONSERVE, offsets NON acquittes
+Somme des LAG apres 90 s de coupure : 1271
+ Container vitals-postgres Starting 
+ Container vitals-postgres Started 
+>> postgres relance a 15:58:13
+lignes_totales 60 s apres le redemarrage : 410473 (avant : 408505)
+Somme des LAG 60 s apres le redemarrage : 47
+Consommateur : running redemarrages=1
+consumer-2  | 14:58:36 LOT taille=60 inseres=60 doublons=0 lus=1547
+consumer-2  | 14:58:41 LOT taille=61 inseres=61 doublons=0 lus=1608
+consumer-2  | 14:58:46 LOT taille=59 inseres=59 doublons=0 lus=1667
+consumer-2  | 14:58:51 LOT taille=60 inseres=60 doublons=0 lus=1727
+consumer-2  | 14:58:56 LOT taille=60 inseres=60 doublons=0 lus=1787
+consumer-2  | 14:59:01 LOT taille=60 inseres=60 doublons=0 lus=1847
+consumer-2  | 14:59:06 LOT taille=61 inseres=61 doublons=0 lus=1908
+consumer-2  | 14:59:11 LOT taille=60 inseres=60 doublons=0 lus=1968
+
+================ 5.4 Reprise sans perte ni doublon (MESURE 19) (15:59:15)
+ lignes_totales | messages_distincts | patients_distincts |      premier_releve      |       dernier_releve       
+----------------+--------------------+--------------------+--------------------------+----------------------------
+         410473 |             410473 |                 12 | 2026-10-27 14:13:52.6+00 | 2026-10-27 14:59:11.869+00
+(1 row)
+
+lignes_totales avant le SIGKILL : 410533
+ Container s1-vitals-stream-consumer-2 Killing 
+ Container s1-vitals-stream-consumer-2 Killed 
+>> SIGKILL a 15:59:18
+
+GROUP            TOPIC           PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG             CONSUMER-ID                                                 HOST            CLIENT-ID
+vitals-persister mimic-vitals    1          35247           35249           2               persister-bf5a2d3b4945-5f5d30fa-4b78-42b2-a4bc-82ba87896d53 /172.18.0.4     persister-bf5a2d3b4945
+vitals-persister mimic-vitals    2          524             524             0               persister-bf5a2d3b4945-5f5d30fa-4b78-42b2-a4bc-82ba87896d53 /172.18.0.4     persister-bf5a2d3b4945
+vitals-persister mimic-vitals    0          104169          104175          6               persister-bf5a2d3b4945-5f5d30fa-4b78-42b2-a4bc-82ba87896d53 /172.18.0.4     persister-bf5a2d3b4945
+vitals-persister mimic-vitals    5          68398           68402           4               persister-bf5a2d3b4945-5f5d30fa-4b78-42b2-a4bc-82ba87896d53 /172.18.0.4     persister-bf5a2d3b4945
+vitals-persister mimic-vitals    3          102598          102603          5               persister-bf5a2d3b4945-5f5d30fa-4b78-42b2-a4bc-82ba87896d53 /172.18.0.4     persister-bf5a2d3b4945
+vitals-persister mimic-vitals    4          102597          102603          6               persister-bf5a2d3b4945-5f5d30fa-4b78-42b2-a4bc-82ba87896d53 /172.18.0.4     persister-bf5a2d3b4945 Container vitals-postgres Running 
+ Container vitals-kafka Running 
+ Container vitals-kafka Waiting 
+ Container vitals-postgres Waiting 
+ Container vitals-postgres Healthy 
+ Container vitals-kafka Healthy 
+ Container s1-vitals-stream-consumer-2 Starting 
+ Container s1-vitals-stream-consumer-2 Started 
+>> 90 s (dont ~45 s d'expiration de session du membre tue)...
+ Container s1-vitals-stream-consumer-2 Stopping 
+ Container s1-vitals-stream-consumer-2 Stopped 
+consumer-2  | 15:00:51 Arret. lus=1128 inseres=1128 ignores_doublons=0 rejets=0 duree=91.1s debit=12.4 msg/s
+ Container vitals-kafka Waiting 
+ Container vitals-postgres Waiting 
+ Container vitals-postgres Healthy 
+ Container vitals-kafka Healthy 
+ Container s1-vitals-stream-consumer-2 Starting 
+ Container s1-vitals-stream-consumer-2 Started 
+-- doublons Kafka (0 ligne attendue) :
+ kafka_partition | kafka_offset | count 
+-----------------+--------------+-------
+(0 rows)
+
+-- trous d'offsets (lignes = etendue attendu) :
+ kafka_partition | lignes | etendue 
+-----------------+--------+---------
+               0 | 102951 |  102951
+               1 |  34341 |   34341
+               2 |     24 |      24
+               3 | 102880 |  102880
+               4 | 102879 |  102879
+               5 |  68586 |   68586
+(6 rows)
+
+ lignes_totales | messages_distincts | patients_distincts |      premier_releve      |       dernier_releve       
+----------------+--------------------+--------------------+--------------------------+----------------------------
+         411661 |             411661 |                 12 | 2026-10-27 14:13:52.6+00 | 2026-10-27 15:00:51.124+00
+(1 row)
+
+-- bonus extension 2 : latence de bout en bout (ingested_at - event_time), hors rattrapages :
+              p50_p95_p99_s               
+------------------------------------------
+ {5.024148,41.72366744999987,45.12584631}
+(1 row)
+
+
+>> FIN partie5 (16:00:54)

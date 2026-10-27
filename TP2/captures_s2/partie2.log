@@ -1,0 +1,57 @@
+>> s2.sh partie2 — 2026-10-27 15:16:26
+>> Espace disque libre : 5 Go
+>> ATTENTION : moins de 10 Go libres, risque de disque plein (images PostgreSQL et consommateur)
+>> Docker OK
+
+================ 2.2 Environnement du consommateur (15:16:28)
+cgr.dev/chainguard/wolfi-base:latest
+Base figee : FROM cgr.dev/chainguard/wolfi-base:latest@sha256:0b179206ab162b12a43bacea1b525a4023e0272005c92d08555c61b1beaedc40
+
+[notice] A new release of pip is available: 23.2.1 -> 26.2.2
+[notice] To update, run: /Users/korich/s1-vitals-stream/.venv/bin/python -m pip install --upgrade pip
+confluent-kafka 2.6.1 | psycopg2 2.9.10 (dt dec pq3 ext lo64)
+
+================ 2.4 Experience 1 : groupe neuf et auto.offset.reset (MESURE 4) (15:17:10)
+explo-earliest (earliest) lancement 1 : lus=2341  [[c1] FIN t=15:17:31 lus=2341 repartition={0:622, 1:231, 2:24, 3:549, 4:549, 5:366}]
+explo-earliest (earliest) lancement 2 : lus=264  [[c1] FIN t=15:17:53 lus=264 repartition={0:65, 1:22, 3:66, 4:66, 5:45}]
+-- MESURE 5 : --describe explo-earliest juste apres l'arret propre
+
+Consumer group 'explo-earliest' has no active members.
+
+GROUP           TOPIC           PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG             CONSUMER-ID     HOST            CLIENT-ID
+explo-earliest  mimic-vitals    1          1253            1255            2               -               -               -
+explo-earliest  mimic-vitals    2          524             524             0               -               -               -
+explo-earliest  mimic-vitals    0          2187            2193            6               -               -               -
+explo-earliest  mimic-vitals    5          411             414             3               -               -               -
+explo-earliest  mimic-vitals    3          615             621             6               -               -               -
+explo-earliest  mimic-vitals    4          615             621             6               -               -               -explo-latest (latest) lancement 1 : lus=229  [[c1] FIN t=15:18:15 lus=229 repartition={0:57, 1:20, 3:57, 4:57, 5:38}]
+explo-latest (latest) lancement 2 : lus=252  [[c1] FIN t=15:18:36 lus=252 repartition={0:64, 1:20, 3:63, 4:63, 5:42}]
+-- groupes connus du broker :
+explo-latest
+explo-earliest
+
+================ 2.5 Experience 2 : acquittement automatique contre manuel (MESURE 6) (15:18:38)
+explo-auto (auto) : kill -9 a 15:18:54 ; dernier lus= affiche avant le kill : 3300
+
+GROUP           TOPIC           PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG             CONSUMER-ID                                     HOST            CLIENT-ID
+explo-auto      mimic-vitals    1          1313            1316            3               lecteur-c1-26f7e9e7-86cf-4678-92ff-79e0f4677f48 /192.168.65.1   lecteur-c1
+explo-auto      mimic-vitals    2          524             524             0               lecteur-c1-26f7e9e7-86cf-4678-92ff-79e0f4677f48 /192.168.65.1   lecteur-c1
+explo-auto      mimic-vitals    0          2367            2376            9               lecteur-c1-26f7e9e7-86cf-4678-92ff-79e0f4677f48 /192.168.65.1   lecteur-c1
+explo-auto      mimic-vitals    5          530             536             6               lecteur-c1-26f7e9e7-86cf-4678-92ff-79e0f4677f48 /192.168.65.1   lecteur-c1
+explo-auto      mimic-vitals    3          795             804             9               lecteur-c1-26f7e9e7-86cf-4678-92ff-79e0f4677f48 /192.168.65.1   lecteur-c1
+explo-auto      mimic-vitals    4          795             804             9               lecteur-c1-26f7e9e7-86cf-4678-92ff-79e0f4677f48 /192.168.65.1   lecteur-c1explo-auto : CURRENT-OFFSET total = 6324 ; LAG total juste apres le kill = 36 (lus mais non acquittes => relus)
+explo-auto : relance -> ATTRIBUTION apres 42,4 s (expiration de la session du membre tue)
+explo-auto : relance -> [c1] FIN t=15:20:40 lus=1272 repartition={0:318, 1:106, 3:318, 4:318, 5:212}
+explo-manuel (manuel) : kill -9 a 15:20:56 ; dernier lus= affiche avant le kill : 4750
+
+GROUP           TOPIC           PARTITION  CURRENT-OFFSET  LOG-END-OFFSET  LAG             CONSUMER-ID                                     HOST            CLIENT-ID
+explo-manuel    mimic-vitals    1          1436            1437            1               lecteur-c1-6cb8a865-baa6-4824-a28c-0b1b6073ab68 /192.168.65.1   lecteur-c1
+explo-manuel    mimic-vitals    2          524             524             0               lecteur-c1-6cb8a865-baa6-4824-a28c-0b1b6073ab68 /192.168.65.1   lecteur-c1
+explo-manuel    mimic-vitals    0          2736            2739            3               lecteur-c1-6cb8a865-baa6-4824-a28c-0b1b6073ab68 /192.168.65.1   lecteur-c1
+explo-manuel    mimic-vitals    5          776             778             2               lecteur-c1-6cb8a865-baa6-4824-a28c-0b1b6073ab68 /192.168.65.1   lecteur-c1
+explo-manuel    mimic-vitals    3          1164            1167            3               lecteur-c1-6cb8a865-baa6-4824-a28c-0b1b6073ab68 /192.168.65.1   lecteur-c1
+explo-manuel    mimic-vitals    4          1164            1167            3               lecteur-c1-6cb8a865-baa6-4824-a28c-0b1b6073ab68 /192.168.65.1   lecteur-c1explo-manuel : CURRENT-OFFSET total = 7800 ; LAG total juste apres le kill = 12 (lus mais non acquittes => relus)
+explo-manuel : relance -> ATTRIBUTION apres 43,4 s (expiration de la session du membre tue)
+explo-manuel : relance -> [c1] FIN t=15:22:42 lus=1261 repartition={0:315, 1:105, 3:315, 4:316, 5:210}
+
+>> FIN partie2 (15:22:42)

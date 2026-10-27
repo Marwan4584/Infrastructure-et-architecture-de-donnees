@@ -1,0 +1,8 @@
+%4|1793110432.683|GETPID|vitals-simulators1#producer-1| [thrd:main]: Failed to acquire idempotence PID from broker localhost:29092/1: Broker: Coordinator load in progress: retrying
+Producteur démarré : bootstrap=localhost:29092 topic=mimic-vitals patients=12 intervalle=1.0s
+===== BILAN =====
+Messages envoyés : 144
+Non livrés (échecs) : 0
+Restés dans le buffer après flush : 0
+Durée : 12.1 s
+Débit : 11.94 msg/s
