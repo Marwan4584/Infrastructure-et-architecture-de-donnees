@@ -1,0 +1,27 @@
+[cA] DEMARRAGE t=15:30:28 groupe=vitals-explo-groupe reset=latest auto_commit=True strategie=range
+[cA] ATTRIBUTION t=15:30:28 lus=0 partitions=[0, 1, 2, 3, 4, 5]
+[cA] RETRAIT t=15:30:31 lus=43 partitions=[0, 1, 2, 3, 4, 5]
+[cA] ATTRIBUTION t=15:30:31 lus=43 partitions=[0, 1, 2]
+[cA] lus=50 partition=0 offset=4457 patient=P012
+[cA] RETRAIT t=15:30:43 lus=91 partitions=[0, 1, 2]
+[cA] ATTRIBUTION t=15:30:43 lus=91 partitions=[0, 1, 2, 3, 4, 5]
+[cA] lus=100 partition=3 offset=2912 patient=P009
+[cA] lus=150 partition=5 offset=1949 patient=P004
+[cA] RETRAIT t=15:30:46 lus=162 partitions=[0, 1, 2, 3, 4, 5]
+[cA] ATTRIBUTION t=15:30:46 lus=162 partitions=[0, 1, 2]
+[cA] lus=200 partition=0 offset=4528 patient=P010
+[cA] lus=250 partition=1 offset=2045 patient=P007
+[cA] lus=300 partition=0 offset=4603 patient=P010
+[cA] lus=350 partition=1 offset=2070 patient=P007
+[cA] RETRAIT t=15:31:41 lus=378 partitions=[0, 1, 2]
+[cA] ATTRIBUTION t=15:31:41 lus=378 partitions=[0, 1, 2, 3, 4, 5]
+[cA] lus=400 partition=3 offset=2970 patient=P003
+[cA] lus=450 partition=3 offset=3020 patient=P009
+[cA] lus=500 partition=3 offset=3070 patient=P008
+[cA] lus=550 partition=4 offset=2979 patient=P002
+[cA] lus=600 partition=4 offset=3029 patient=P011
+[cA] lus=650 partition=4 offset=3079 patient=P006
+[cA] lus=700 partition=5 offset=2005 patient=P004
+[cA] lus=750 partition=5 offset=2055 patient=P004
+[cA] FIN t=15:31:41 lus=755 repartition={0:221, 1:73, 3:173, 4:173, 5:115}
+[cA] RETRAIT t=15:31:41 lus=755 partitions=[0, 1, 2, 3, 4, 5]

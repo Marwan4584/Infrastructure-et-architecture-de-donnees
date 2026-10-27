@@ -1,0 +1,11 @@
+[cA] DEMARRAGE t=15:31:42 groupe=vitals-explo-coop reset=latest auto_commit=True strategie=cooperative-sticky
+[cA] ATTRIBUTION t=15:31:42 lus=0 partitions=[0, 1, 2, 3, 4, 5]
+[cA] RETRAIT t=15:31:45 lus=36 partitions=[0, 1, 2]
+[cA] ATTRIBUTION t=15:31:45 lus=36 partitions=[aucune]
+[cA] lus=50 partition=3 offset=3105 patient=P003
+[cA] ATTRIBUTION t=15:31:48 lus=60 partitions=[aucune]
+[cA] lus=100 partition=5 offset=2083 patient=P004
+[cA] ATTRIBUTION t=15:31:54 lus=108 partitions=[2, 1, 0]
+[cA] lus=150 partition=4 offset=3140 patient=P011
+[cA] FIN t=15:31:58 lus=160 repartition={0:23, 1:8, 3:48, 4:49, 5:32}
+[cA] RETRAIT t=15:31:58 lus=160 partitions=[0, 1, 2, 3, 4, 5]

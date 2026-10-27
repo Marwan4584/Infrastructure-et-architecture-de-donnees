@@ -1,0 +1,5 @@
+[cB] DEMARRAGE t=15:31:42 groupe=vitals-explo-coop reset=latest auto_commit=True strategie=cooperative-sticky
+[cB] ATTRIBUTION t=15:31:45 lus=0 partitions=[aucune]
+[cB] ATTRIBUTION t=15:31:48 lus=0 partitions=[2, 1, 0]
+[cB] FIN t=15:31:53 lus=33 repartition={0:25, 1:8}
+[cB] RETRAIT t=15:31:53 lus=33 partitions=[0, 1, 2]

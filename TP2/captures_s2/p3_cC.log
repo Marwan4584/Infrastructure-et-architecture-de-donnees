@@ -1,0 +1,15 @@
+[cC] DEMARRAGE t=15:28:11 groupe=vitals-explo-groupe reset=latest auto_commit=True strategie=range
+[cC] ATTRIBUTION t=15:28:12 lus=0 partitions=[4, 5]
+[cC] lus=50 partition=5 offset=1663 patient=P004
+[cC] lus=100 partition=5 offset=1683 patient=P004
+[cC] lus=150 partition=5 offset=1703 patient=P004
+[cC] lus=200 partition=5 offset=1723 patient=P004
+[cC] lus=250 partition=5 offset=1743 patient=P004
+[cC] lus=300 partition=5 offset=1763 patient=P004
+[cC] RETRAIT t=15:29:22 lus=345 partitions=[4, 5]
+[cC] ATTRIBUTION t=15:29:22 lus=345 partitions=[3, 4, 5]
+[cC] lus=350 partition=5 offset=1783 patient=P004
+[cC] RETRAIT t=15:29:25 lus=369 partitions=[3, 4, 5]
+[cC] ATTRIBUTION t=15:29:25 lus=369 partitions=[0, 1, 2, 3, 4, 5]
+[cC] FIN t=15:29:26 lus=390 repartition={0:9, 1:4, 3:12, 4:219, 5:146}
+[cC] RETRAIT t=15:29:26 lus=390 partitions=[0, 1, 2, 3, 4, 5]

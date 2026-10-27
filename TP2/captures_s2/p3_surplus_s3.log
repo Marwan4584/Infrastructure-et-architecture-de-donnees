@@ -1,0 +1,8 @@
+[s3] DEMARRAGE t=15:29:30 groupe=vitals-explo-groupe reset=latest auto_commit=True strategie=range
+[s3] ATTRIBUTION t=15:29:31 lus=0 partitions=[4]
+[s3] RETRAIT t=15:29:34 lus=9 partitions=[4]
+[s3] ATTRIBUTION t=15:29:34 lus=9 partitions=[2]
+[s3] RETRAIT t=15:29:37 lus=9 partitions=[2]
+[s3] ATTRIBUTION t=15:29:37 lus=9 partitions=[2]
+[s3] FIN t=15:30:27 lus=9 repartition={4:9}
+[s3] RETRAIT t=15:30:27 lus=9 partitions=[2]

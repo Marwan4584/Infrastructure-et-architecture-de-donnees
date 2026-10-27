@@ -1,0 +1,14 @@
+[s1] DEMARRAGE t=15:29:28 groupe=vitals-explo-groupe reset=latest auto_commit=True strategie=range
+[s1] ATTRIBUTION t=15:29:28 lus=0 partitions=[0, 1, 2, 3, 4, 5]
+[s1] lus=50 partition=0 offset=4271 patient=P012
+[s1] RETRAIT t=15:29:31 lus=59 partitions=[0, 1, 2, 3, 4, 5]
+[s1] ATTRIBUTION t=15:29:31 lus=59 partitions=[0, 1]
+[s1] RETRAIT t=15:29:34 lus=71 partitions=[0, 1]
+[s1] ATTRIBUTION t=15:29:34 lus=71 partitions=[0]
+[s1] RETRAIT t=15:29:37 lus=83 partitions=[0]
+[s1] ATTRIBUTION t=15:29:37 lus=83 partitions=[0]
+[s1] lus=100 partition=0 offset=4309 patient=P010
+[s1] lus=150 partition=0 offset=4359 patient=P005
+[s1] lus=200 partition=0 offset=4409 patient=P012
+[s1] FIN t=15:30:27 lus=231 repartition={0:184, 1:7, 3:15, 4:15, 5:10}
+[s1] RETRAIT t=15:30:27 lus=231 partitions=[0]

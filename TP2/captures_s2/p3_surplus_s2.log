@@ -1,0 +1,9 @@
+[s2] DEMARRAGE t=15:29:29 groupe=vitals-explo-groupe reset=latest auto_commit=True strategie=range
+[s2] ATTRIBUTION t=15:29:31 lus=0 partitions=[2, 3]
+[s2] RETRAIT t=15:29:34 lus=9 partitions=[2, 3]
+[s2] ATTRIBUTION t=15:29:34 lus=9 partitions=[1]
+[s2] RETRAIT t=15:29:37 lus=12 partitions=[1]
+[s2] ATTRIBUTION t=15:29:37 lus=12 partitions=[1]
+[s2] lus=50 partition=1 offset=1991 patient=P007
+[s2] FIN t=15:30:27 lus=63 repartition={1:54, 3:9}
+[s2] RETRAIT t=15:30:27 lus=63 partitions=[1]

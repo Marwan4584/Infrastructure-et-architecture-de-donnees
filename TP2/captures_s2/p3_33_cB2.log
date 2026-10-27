@@ -1,0 +1,3 @@
+[cB] DEMARRAGE t=15:30:44 groupe=vitals-explo-groupe reset=latest auto_commit=True strategie=range
+[cB] ATTRIBUTION t=15:30:46 lus=0 partitions=[3, 4, 5]
+[cB] lus=50 partition=5 offset=1965 patient=P004
