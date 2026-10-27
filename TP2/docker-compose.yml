@@ -1,0 +1,116 @@
+services:
+  kafka:
+    image: confluentinc/cp-kafka:7.8.0
+    container_name: vitals-kafka
+    environment:
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+      CLUSTER_ID: MkU3OEVBNTcwNTJENDM2Qg
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093,PLAINTEXT_HOST://0.0.0.0:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "false"
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+    ports:
+      - "29092:29092"
+    networks:
+      - vitals-net
+    healthcheck:
+      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 20s
+
+  # Seance 2 : la memoire du systeme.
+  postgres:
+    # PostgreSQL 18.6 fige par digest : chez Chainguard, seul le tag latest est gratuit.
+    image: cgr.dev/chainguard/postgres:latest@sha256:0926ac7262a2c1963179eb939cd5d610e1be3ecca90b4b5cad8db8df16fab87e
+    container_name: vitals-postgres
+    ports:
+      - "55432:5432"            # decale : pas de conflit avec un PostgreSQL local sur 5432
+    environment:
+      POSTGRES_DB: healthstream
+      POSTGRES_USER: hs_user
+      POSTGRES_PASSWORD: hs_password
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+      # Le schema est de la configuration, pas une donnee : montage en lecture seule.
+      # L'image Chainguard lit /var/lib/postgres/initdb, pas /docker-entrypoint-initdb.d.
+      - ./sql/init.sql:/var/lib/postgres/initdb/01-init.sql:ro
+    networks:
+      - vitals-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hs_user -d healthstream"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  producer:
+    depends_on:
+      kafka:
+        condition: service_healthy
+    build:
+      context: ./producer
+    image: vitals-producer:0.1
+    container_name: vitals-producer
+    environment:
+      KAFKA_BOOTSTRAP: kafka:9092
+      VITALS_TOPIC: mimic-vitals
+      INTERVAL_S: "${INTERVAL_S:-1.0}"   # surchargeable depuis le terminal (partie 5.2)
+    volumes:
+      - vitals-logs:/app/logs
+    networks:
+      - vitals-net
+    healthcheck:
+      test: ["CMD", "python", "-c", "import sys; sys.exit(0)"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  # Seance 2 : consommateur de persistance.
+  # PAS de container_name : il interdirait docker compose up --scale consumer=2.
+  consumer:
+    build:
+      context: ./consumer
+    image: vitals-consumer:0.1
+    depends_on:
+      kafka:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    environment:
+      KAFKA_BOOTSTRAP: kafka:9092         # listener interne, pas localhost:29092
+      VITALS_TOPIC: mimic-vitals
+      CONSUMER_GROUP: vitals-persister
+      AUTO_OFFSET_RESET: earliest
+      BATCH_SIZE: "${BATCH_SIZE:-200}"
+      BATCH_TIMEOUT_S: "5.0"
+      PG_HOST: postgres                   # nom de service, pas localhost
+      PG_PORT: "5432"                     # port interne, pas 55432
+      PG_DB: healthstream
+      PG_USER: hs_user
+      PG_PASSWORD: hs_password
+    restart: unless-stopped
+    networks:
+      - vitals-net
+
+volumes:
+  vitals-logs:
+  kafka-data:
+  pg-data:
+
+networks:
+  vitals-net:
+    driver: bridge
